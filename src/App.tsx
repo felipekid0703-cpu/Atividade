@@ -16,6 +16,11 @@ const SignupPage = lazy(() =>
 const SettingsPage = lazy(() =>
   import('@/features/auth/SettingsPage').then((module) => ({ default: module.SettingsPage })),
 )
+const ChangePasswordPage = lazy(() =>
+  import('@/features/auth/ChangePasswordPage').then((module) => ({
+    default: module.ChangePasswordPage,
+  })),
+)
 const ParentDashboardPage = lazy(() =>
   import('@/features/parent/ParentDashboardPage').then((module) => ({
     default: module.ParentDashboardPage,
@@ -37,15 +42,10 @@ function HomeRedirect() {
     )
   }
   if (!authenticated || !profile) return <Navigate to="/login" replace />
+  if (profile.must_change_password) return <Navigate to="/change-password" replace />
   return (
     <Navigate
-      to={
-        profile.role === 'student'
-          ? '/student/dashboard'
-          : profile.role === 'tutor'
-            ? '/tutor/dashboard'
-            : '/parent/dashboard'
-      }
+      to={profile.role === 'student' ? '/student/dashboard' : '/parent/dashboard'}
       replace
     />
   )
@@ -65,7 +65,15 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route element={<RoleGuard allowed={['student', 'parent', 'tutor']} />}>
+            <Route
+              path="/change-password"
+              element={
+                <RoleGuard allowPasswordChange>
+                  <ChangePasswordPage />
+                </RoleGuard>
+              }
+            />
+            <Route element={<RoleGuard allowed={['student', 'parent']} />}>
               <Route element={<AppLayout />}>
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route
@@ -80,14 +88,6 @@ export default function App() {
                   path="/parent/dashboard"
                   element={
                     <RoleGuard allowed="parent">
-                      <ParentDashboardPage />
-                    </RoleGuard>
-                  }
-                />
-                <Route
-                  path="/tutor/dashboard"
-                  element={
-                    <RoleGuard allowed="tutor">
                       <ParentDashboardPage />
                     </RoleGuard>
                   }

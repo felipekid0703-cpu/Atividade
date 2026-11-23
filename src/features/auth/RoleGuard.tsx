@@ -7,9 +7,10 @@ import type { UserRole } from '@/types/auth'
 interface RoleGuardProps {
   allowed?: UserRole | readonly UserRole[]
   children?: ReactNode
+  allowPasswordChange?: boolean
 }
 
-export function RoleGuard({ allowed, children }: RoleGuardProps) {
+export function RoleGuard({ allowed, children, allowPasswordChange = false }: RoleGuardProps) {
   const { authenticated, profile, loading, authError, signOut } = useAuth()
   const [signOutError, setSignOutError] = useState<string | null>(null)
 
@@ -51,6 +52,9 @@ export function RoleGuard({ allowed, children }: RoleGuardProps) {
 
   const roles = allowed ? (Array.isArray(allowed) ? allowed : [allowed]) : null
   if (roles && !roles.includes(profile.role)) return <Navigate to="/" replace />
+  if (profile.must_change_password && !allowPasswordChange) {
+    return <Navigate to="/change-password" replace />
+  }
 
   return children ? children : <Outlet />
 }

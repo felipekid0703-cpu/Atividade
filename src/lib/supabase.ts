@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { getKeycloakAccessToken } from '@/lib/keycloak'
 import type { Database } from '@/types/database'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -19,10 +18,9 @@ export const supabase = createClient<Database>(
   anonKey ?? 'public-anon-key',
   {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
     },
-    accessToken: getKeycloakAccessToken,
   },
 )

@@ -39,13 +39,7 @@ export function SettingsPage() {
           </div>
           <div>
             <dt className="text-muted-foreground">Perfil</dt>
-            <dd>
-              {profile?.role === 'student'
-                ? 'Aluno'
-                : profile?.role === 'tutor'
-                  ? 'Tutor'
-                  : 'Pai ou responsável'}
-            </dd>
+            <dd>{profile?.role === 'student' ? 'Aluno' : 'Tutor'}</dd>
           </div>
         </dl>
       </div>

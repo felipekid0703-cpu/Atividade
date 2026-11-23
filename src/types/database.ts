@@ -1,10 +1,11 @@
-export type UserRole = 'student' | 'parent' | 'tutor'
+export type UserRole = 'student' | 'parent'
 export type ParentStudentLinkStatus = 'pending' | 'active' | 'revoked'
 
 export interface ProfileRow {
   id: string
   username: string | null
   role: UserRole
+  must_change_password: boolean
   full_name: string | null
   email: string | null
   avatar_url: string | null
@@ -20,6 +21,7 @@ export interface Database {
           id: string
           role: UserRole
           username?: string | null
+          must_change_password?: boolean
           full_name?: string | null
           email?: string | null
           avatar_url?: string | null
@@ -53,12 +55,7 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: {
-      ensure_keycloak_profile: {
-        Args: Record<string, never>
-        Returns: ProfileRow
-      }
-    }
+    Functions: Record<string, never>
     Enums: {
       app_role: UserRole
       parent_student_link_status: ParentStudentLinkStatus

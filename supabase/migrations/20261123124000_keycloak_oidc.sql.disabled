@@ -1,3 +1,4 @@
+-- Disabled legacy migration: do not run with Supabase Auth username aliases.
 drop policy if exists "Profiles can be read by their owner" on public.profiles;
 drop policy if exists "Profiles can be updated by their owner" on public.profiles;
 drop policy if exists "Parents can read their own student links" on public.parent_student_links;
