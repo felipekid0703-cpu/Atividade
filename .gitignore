@@ -1,0 +1,21 @@
+# dependências e build
+node_modules
+dist
+*.tsbuildinfo
+
+# segredos: nunca commitar
+.env
+.env.local
+.env.*.local
+
+# testes
+playwright-report
+test-results
+
+# logs e editor
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+.vercel
