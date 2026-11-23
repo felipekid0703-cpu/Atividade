@@ -6,7 +6,6 @@ export type ProfileRow = {
   id: string
   username: string | null
   role: UserRole
-  must_change_password: boolean
   full_name: string | null
   email: string | null
   avatar_url: string | null
@@ -61,7 +60,6 @@ export interface Database {
           id: string
           role: UserRole
           username?: string | null
-          must_change_password?: boolean
           full_name?: string | null
           email?: string | null
           avatar_url?: string | null

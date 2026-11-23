@@ -10,6 +10,7 @@ O Supabase continua sendo responsável por autenticar e proteger a sessão.
    - `20261123112000_profiles_and_parent_links.sql`
    - `20261123130000_supabase_username_login.sql`
    - `20261123140000_student_study_content.sql`
+   - `20261123150000_remove_password_change_requirement.sql`
 2. Não aplique `20261123124000_keycloak_oidc.sql`; ela pertence ao fluxo antigo de
    autenticação OIDC e converte os IDs para o formato incompatível com este fluxo.
 3. Em **Authentication > Settings**, desative novos cadastros públicos. As contas
@@ -22,8 +23,7 @@ O Supabase continua sendo responsável por autenticar e proteger a sessão.
 
 As questões ficam em `questions`; o gabarito é carregado separadamente em
 `question_answer_keys`. Não mova o gabarito para `src/data/seed.ts` nem para uma coluna
-da tabela de questões. O acesso às questões e respostas também permanece bloqueado
-enquanto a senha inicial não for trocada.
+da tabela de questões. As questões e respostas continuam protegidas pelas políticas RLS.
 
 ## Criar as três contas
 
@@ -36,9 +36,9 @@ com senha. Use estes aliases técnicos (sem caixa postal):
 | `LUCVBRE`         | `lucvbre@users.caderno.invalid`  |
 | `LUFERA`          | `lufera@users.caderno.invalid`   |
 
-As senhas temporárias devem ser digitadas diretamente no Dashboard pelo administrador,
-nunca inseridas no repositório, em SQL versionado ou no frontend. O trigger cria cada
-perfil como `student` e com `must_change_password = true`. Depois de criar os usuários,
+As senhas devem ser digitadas diretamente no Dashboard pelo administrador, nunca
+inseridas no repositório, em SQL versionado ou no frontend. O trigger cria cada perfil
+como `student`. Depois de criar os usuários,
 execute uma única vez no SQL Editor do Dashboard:
 
 ```sql
@@ -50,17 +50,15 @@ where username in ('lucvbre', 'lufera');
 `parent` é o papel de acesso comum aos dois tutores; ambos recebem as mesmas permissões.
 O aluno permanece `student`. A role não pode ser alterada pelo cliente.
 
-## Primeiro acesso e validação
+## Acesso e validação
 
 1. Inicie o app com `npm run dev` e acesse `/login`.
-2. Entre com o username e a senha temporária.
-3. O app deve exigir a criação de uma nova senha antes de abrir o painel.
-4. Depois da troca, confirme que aluno e tutores conseguem entrar e sair. Confirme
-   também que o perfil do aluno cai no painel de aluno e os dois tutores no mesmo
-   painel de tutor.
+2. Entre com o username e a senha definida no Dashboard.
+3. Confirme que aluno e tutores conseguem entrar e sair. Confirme também que o perfil
+   do aluno cai no painel de aluno e os dois tutores no mesmo painel de tutor.
 
 Depois de aplicar as migrations e o seed, o aluno terá acesso às 105 questões. O painel
 dos tutores permanece limitado até a fase de acompanhamento. As datas de prova de
 Matemática ficam em branco até serem confirmadas com a escola, pois o calendário
-oficial anexado diverge do cronograma transcrito no caderno. Não use senha temporária
-fraca em produção.
+oficial anexado diverge do cronograma transcrito no caderno. Defina senhas fortes e
+exclusivas antes de usar em produção.

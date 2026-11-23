@@ -5,7 +5,7 @@
 - Toda a interface e as mensagens ao usuário devem estar em pt-BR.
 - A autenticação usa Supabase Auth com usuário e senha. A interface aceita username; aliases técnicos de e-mail são internos, não são exibidos e não correspondem a caixas postais.
 - O cadastro público deve ficar desativado. Contas são criadas pelo administrador; o trigger cria novos perfis como `student`, e o administrador atribui `parent` aos tutores. Os dois tutores têm permissões idênticas.
-- A primeira senha é temporária: `profiles.must_change_password` deve obrigar a troca antes de acessar as áreas protegidas. A senha nunca deve ser armazenada no código ou em arquivos versionados.
+- Não exigir troca de senha no primeiro acesso. Nunca armazenar senhas no código, em SQL versionado ou em arquivos versionados.
 - Cada matéria tem `scheduled_date` (dia de estudo) e `exam_date` (dia da prova), sendo `exam_date = scheduled_date + 1 dia`. O dashboard usa a data da prova. A data real da prova de Matemática do dia 2 precisa ser confirmada com o usuário: estudo em 24/11, prova prevista em 25/11, embora o caderno marque 25/11 como descanso.
 - O gabarito não pode ser armazenado em uma coluna de `questions` nem exposto ao cliente sem RLS. Deve ficar em `question_answer_keys`, com acesso condicionado a uma resposta enviada pelo aluno ou ao vínculo ativo do responsável com esse aluno.
 - Roteiros como “Montagem” e “Cálculo” devem ficar em `questions.scaffold`, separados de `hints`.
