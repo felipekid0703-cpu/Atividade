@@ -31,6 +31,16 @@ const StudentDashboardPage = lazy(() =>
     default: module.StudentDashboardPage,
   })),
 )
+const SubjectPage = lazy(() =>
+  import('@/features/student/SubjectPage').then((module) => ({
+    default: module.SubjectPage,
+  })),
+)
+const QuestionPage = lazy(() =>
+  import('@/features/student/QuestionPage').then((module) => ({
+    default: module.QuestionPage,
+  })),
+)
 
 function HomeRedirect() {
   const { authenticated, profile, loading } = useAuth()
@@ -81,6 +91,22 @@ export default function App() {
                   element={
                     <RoleGuard allowed="student">
                       <StudentDashboardPage />
+                    </RoleGuard>
+                  }
+                />
+                <Route
+                  path="/student/subject/:slug"
+                  element={
+                    <RoleGuard allowed="student">
+                      <SubjectPage />
+                    </RoleGuard>
+                  }
+                />
+                <Route
+                  path="/student/question/:id"
+                  element={
+                    <RoleGuard allowed="student">
+                      <QuestionPage />
                     </RoleGuard>
                   }
                 />

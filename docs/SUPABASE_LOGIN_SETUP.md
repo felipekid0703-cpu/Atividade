@@ -9,12 +9,21 @@ O Supabase continua sendo responsável por autenticar e proteger a sessão.
 1. Confirme que as migrations de perfis e de username foram aplicadas:
    - `20261123112000_profiles_and_parent_links.sql`
    - `20261123130000_supabase_username_login.sql`
+   - `20261123140000_student_study_content.sql`
 2. Não aplique `20261123124000_keycloak_oidc.sql`; ela pertence ao fluxo antigo de
    autenticação OIDC e converte os IDs para o formato incompatível com este fluxo.
 3. Em **Authentication > Settings**, desative novos cadastros públicos. As contas
    desta versão são provisionadas somente pelo administrador.
 4. Configure no deploy apenas `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`. Nunca
    coloque a chave `service_role` no navegador.
+5. Depois das migrations, execute `supabase/seed.sql` pelo SQL Editor do Dashboard,
+   que usa um contexto administrativo. O script de validação local é
+   `npm run validate:seed`.
+
+As questões ficam em `questions`; o gabarito é carregado separadamente em
+`question_answer_keys`. Não mova o gabarito para `src/data/seed.ts` nem para uma coluna
+da tabela de questões. O acesso às questões e respostas também permanece bloqueado
+enquanto a senha inicial não for trocada.
 
 ## Criar as três contas
 
@@ -50,5 +59,8 @@ O aluno permanece `student`. A role não pode ser alterada pelo cliente.
    também que o perfil do aluno cai no painel de aluno e os dois tutores no mesmo
    painel de tutor.
 
-O painel do aluno ainda não contém as questões; elas serão entregues em uma fase
-separada. Não use senha temporária fraca em produção.
+Depois de aplicar as migrations e o seed, o aluno terá acesso às 105 questões. O painel
+dos tutores permanece limitado até a fase de acompanhamento. As datas de prova de
+Matemática ficam em branco até serem confirmadas com a escola, pois o calendário
+oficial anexado diverge do cronograma transcrito no caderno. Não use senha temporária
+fraca em produção.
