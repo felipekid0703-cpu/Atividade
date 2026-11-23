@@ -34,12 +34,18 @@ export function SettingsPage() {
             <dd>{profile?.full_name || 'Não informado'}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">E-mail</dt>
-            <dd>{profile?.email || 'Não informado'}</dd>
+            <dt className="text-muted-foreground">Usuário</dt>
+            <dd>{profile?.username || 'Não informado'}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Perfil</dt>
-            <dd>{profile?.role === 'student' ? 'Aluno' : 'Pai ou responsável'}</dd>
+            <dd>
+              {profile?.role === 'student'
+                ? 'Aluno'
+                : profile?.role === 'tutor'
+                  ? 'Tutor'
+                  : 'Pai ou responsável'}
+            </dd>
           </div>
         </dl>
       </div>

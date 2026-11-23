@@ -1,39 +1,26 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { z } from 'zod'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@/features/auth/useAuth'
+import { isKeycloakConfigured } from '@/lib/keycloak'
 import { isSupabaseConfigured } from '@/lib/supabase'
 
-const loginSchema = z.object({
-  email: z.string().email('Informe um e-mail válido.'),
-  password: z.string().min(1, 'Informe sua senha.'),
-})
-
-type LoginFields = z.infer<typeof loginSchema>
-
 export function LoginPage() {
-  const { signIn, session, profile, loading, authError } = useAuth()
-  const navigate = useNavigate()
+  const { signIn, authenticated, profile, loading, authError } = useAuth()
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFields>({ resolver: zodResolver(loginSchema) })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const isConfigured = isKeycloakConfigured && isSupabaseConfigured
 
-  if (!loading && session && profile) return <Navigate to="/" replace />
+  if (!loading && authenticated && profile) return <Navigate to="/" replace />
 
-  async function onSubmit(fields: LoginFields) {
+  async function handleLogin() {
     setSubmitError(null)
+    setIsSubmitting(true)
     try {
-      await signIn(fields.email, fields.password)
-      navigate('/', { replace: true })
+      await signIn()
     } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : 'Não foi possível entrar. Tente novamente.',
-      )
+      console.error('[auth] Não foi possível iniciar o login.', error)
+      setSubmitError('Não foi possível iniciar o login. Tente novamente.')
+      setIsSubmitting(false)
     }
   }
 
@@ -43,14 +30,13 @@ export function LoginPage() {
         <header className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold">Entrar no Caderno Inteligente</h1>
           <p className="text-sm text-muted-foreground">
-            Acesse sua conta de aluno ou responsável.
+            Entre com seu nome de usuário e senha.
           </p>
         </header>
 
-        {!isSupabaseConfigured && (
+        {!isConfigured && (
           <p className="rounded-lg bg-warning/20 p-3 text-sm" role="status">
-            Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY em .env.local para
-            habilitar o login.
+            Configure o Keycloak e o Supabase em .env.local para habilitar o login.
           </p>
         )}
         {authError && (
@@ -64,43 +50,14 @@ export function LoginPage() {
           </p>
         )}
 
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <label className="block space-y-1.5 text-sm font-medium">
-            E-mail
-            <input
-              autoComplete="email"
-              className="w-full rounded-lg border bg-background px-3 py-2.5 font-normal"
-              type="email"
-              {...register('email')}
-            />
-            {errors.email && (
-              <span className="text-destructive" role="alert">
-                {errors.email.message}
-              </span>
-            )}
-          </label>
-          <label className="block space-y-1.5 text-sm font-medium">
-            Senha
-            <input
-              autoComplete="current-password"
-              className="w-full rounded-lg border bg-background px-3 py-2.5 font-normal"
-              type="password"
-              {...register('password')}
-            />
-            {errors.password && (
-              <span className="text-destructive" role="alert">
-                {errors.password.message}
-              </span>
-            )}
-          </label>
-          <button
-            className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={isSubmitting || !isSupabaseConfigured}
-            type="submit"
-          >
-            {isSubmitting ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+        <button
+          className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={!isConfigured || loading || isSubmitting}
+          onClick={() => void handleLogin()}
+          type="button"
+        >
+          {isSubmitting ? 'Conectando...' : 'Entrar'}
+        </button>
 
         <p className="text-center text-sm text-muted-foreground">
           Ainda não tem conta?{' '}

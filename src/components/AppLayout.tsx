@@ -5,8 +5,8 @@ import { NotificationBell } from '@/components/NotificationBell'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAuth } from '@/features/auth/useAuth'
 
-function getInitials(name: string | null, email: string | null) {
-  const label = name?.trim() || email?.trim() || '?'
+function getInitials(name: string | null, username: string | null) {
+  const label = name?.trim() || username?.trim() || '?'
   return label
     .split(/[\s@.]+/)
     .filter(Boolean)
@@ -48,7 +48,7 @@ export function AppLayout() {
               aria-label="Configurações da conta"
               className="grid size-10 place-items-center overflow-hidden rounded-full border bg-muted font-medium text-sm"
               to="/settings"
-              title={profile.full_name ?? profile.email ?? 'Minha conta'}
+              title={profile.full_name ?? profile.username ?? 'Minha conta'}
             >
               {profile.avatar_url ? (
                 <img
@@ -57,7 +57,7 @@ export function AppLayout() {
                   src={profile.avatar_url}
                 />
               ) : (
-                getInitials(profile.full_name, profile.email)
+                getInitials(profile.full_name, profile.username)
               )}
             </Link>
             <button

@@ -3,7 +3,9 @@
 ## Decisões de produto
 
 - Toda a interface e as mensagens ao usuário devem estar em pt-BR.
-- Os papéis permitidos são `student` (aluno) e `parent` (pai/responsável); o usuário não pode escolher ou obter outros papéis.
+- A autenticação de usuários da aplicação usa Keycloak OIDC; o Supabase permanece como banco de dados e camada de RLS.
+- Os papéis são `student`, `parent` e `tutor`. `tutor` tem as permissões de acompanhamento de `parent`; cadastro público recebe apenas `student`, e `tutor` é atribuído pelo administrador.
+- Contas usam nome de usuário e não exigem e-mail individual. A identidade do usuário no banco é o `sub` OIDC e as políticas RLS devem validar o issuer confiável. Não permitir que usuários atribuam a si mesmos `parent` ou `tutor`.
 - Cada matéria tem `scheduled_date` (dia de estudo) e `exam_date` (dia da prova), sendo `exam_date = scheduled_date + 1 dia`. O dashboard usa a data da prova. A data real da prova de Matemática do dia 2 precisa ser confirmada com o usuário: estudo em 24/11, prova prevista em 25/11, embora o caderno marque 25/11 como descanso.
 - O gabarito não pode ser armazenado em uma coluna de `questions` nem exposto ao cliente sem RLS. Deve ficar em `question_answer_keys`, com acesso condicionado a uma resposta enviada pelo aluno ou ao vínculo ativo do responsável com esse aluno.
 - Roteiros como “Montagem” e “Cálculo” devem ficar em `questions.scaffold`, separados de `hints`.
@@ -18,5 +20,5 @@
 - Trabalhe por fases. Antes de cada fase, liste os arquivos que serão criados ou alterados e aguarde a aprovação do usuário. Ao concluir uma fase, execute `npm run build` e `npm run lint`, e apresente os resultados.
 - Se faltar uma decisão de produto, pergunte antes de assumir.
 - Nunca exponha o gabarito ao cliente sem a proteção de RLS descrita acima.
-- Não versione `.env.local`, credenciais ou chaves.
+- Não versione `.env.local`, `.env.keycloak.local`, credenciais ou chaves. A chave Supabase `service_role` nunca pode ir para o cliente.
 - Faça commits pequenos usando Conventional Commits.

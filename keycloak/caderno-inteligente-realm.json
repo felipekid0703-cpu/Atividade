@@ -1,0 +1,81 @@
+{
+  "realm": "caderno-inteligente",
+  "enabled": true,
+  "displayName": "Caderno Inteligente 7º Ano",
+  "sslRequired": "external",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["pt-BR"],
+  "defaultLocale": "pt-BR",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": false,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "verifyEmail": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "student",
+        "description": "Aluno do caderno"
+      },
+      {
+        "name": "parent",
+        "description": "Pai ou responsável"
+      },
+      {
+        "name": "tutor",
+        "description": "Tutor com acesso de acompanhamento"
+      }
+    ]
+  },
+  "defaultRoles": ["student"],
+  "clientScopes": [
+    {
+      "name": "supabase-authenticated",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "Supabase database role",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "role",
+            "claim.value": "authenticated",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "caderno-inteligente",
+      "name": "Caderno Inteligente",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "fullScopeAllowed": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:5173/*"],
+      "webOrigins": ["http://localhost:5173"],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "supabase-authenticated"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*"
+      }
+    }
+  ]
+}

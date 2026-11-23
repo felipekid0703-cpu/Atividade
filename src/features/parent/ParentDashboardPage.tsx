@@ -3,11 +3,14 @@ import { useAuth } from '@/features/auth/useAuth'
 
 export function ParentDashboardPage() {
   const { profile } = useAuth()
+  const isTutor = profile?.role === 'tutor'
 
   return (
     <section className="space-y-6">
       <header>
-        <p className="text-sm font-medium text-primary">Área da família</p>
+        <p className="text-sm font-medium text-primary">
+          {isTutor ? 'Área do tutor' : 'Área da família'}
+        </p>
         <h1 className="mt-1 text-2xl font-semibold">
           Olá{profile?.full_name ? `, ${profile.full_name}` : ''}!
         </h1>

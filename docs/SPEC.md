@@ -259,3 +259,13 @@ explanation (comentário do gabarito).
 profile aceita APENAS esses dois valores; qualquer outro deve gerar erro.
 - Nunca usar a chave service_role no client. Somente a anon key no .env.local.
 - Confirmação de e-mail desligada só em desenvolvimento; religar antes do deploy.
+
+## A7. Autenticação sem e-mail individual (decisão posterior)
+
+- Keycloak OIDC é o provedor de identidade; Supabase continua responsável por Postgres, Data API e RLS.
+- Usuários entram com nome de usuário e senha, sem e-mail individual. O cadastro público cria somente alunos. `tutor` é atribuído pelo administrador; `parent` permanece disponível para compatibilidade.
+- `tutor` tem as mesmas permissões de acompanhamento de `parent`, limitadas aos alunos vinculados.
+- Os IDs de perfil são o `sub` OIDC e as policies comparam esse valor como texto. RLS deve falhar fechado para issuers não cadastrados em `trusted_auth_issuers`.
+- O perfil local é criado a partir de claims OIDC assinados, com exatamente um papel de aplicação (`student`, `parent` ou `tutor`). O cliente nunca pode inserir ou alterar o próprio papel.
+- Não exigir troca de senha no primeiro acesso. Não incluir credenciais de usuários nos arquivos, logs ou commits.
+- O issuer de produção deve usar HTTPS e ser configurado no Dashboard Supabase como Custom OIDC; a configuração do provedor não é suportada pelo Supabase CLI local.

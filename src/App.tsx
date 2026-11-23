@@ -28,7 +28,7 @@ const StudentDashboardPage = lazy(() =>
 )
 
 function HomeRedirect() {
-  const { session, profile, loading } = useAuth()
+  const { authenticated, profile, loading } = useAuth()
   if (loading) {
     return (
       <main className="grid min-h-dvh place-items-center p-6" aria-live="polite">
@@ -36,10 +36,16 @@ function HomeRedirect() {
       </main>
     )
   }
-  if (!session || !profile) return <Navigate to="/login" replace />
+  if (!authenticated || !profile) return <Navigate to="/login" replace />
   return (
     <Navigate
-      to={profile.role === 'student' ? '/student/dashboard' : '/parent/dashboard'}
+      to={
+        profile.role === 'student'
+          ? '/student/dashboard'
+          : profile.role === 'tutor'
+            ? '/tutor/dashboard'
+            : '/parent/dashboard'
+      }
       replace
     />
   )
@@ -59,7 +65,7 @@ export default function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route element={<RoleGuard allowed={['student', 'parent']} />}>
+            <Route element={<RoleGuard allowed={['student', 'parent', 'tutor']} />}>
               <Route element={<AppLayout />}>
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route
@@ -74,6 +80,14 @@ export default function App() {
                   path="/parent/dashboard"
                   element={
                     <RoleGuard allowed="parent">
+                      <ParentDashboardPage />
+                    </RoleGuard>
+                  }
+                />
+                <Route
+                  path="/tutor/dashboard"
+                  element={
+                    <RoleGuard allowed="tutor">
                       <ParentDashboardPage />
                     </RoleGuard>
                   }

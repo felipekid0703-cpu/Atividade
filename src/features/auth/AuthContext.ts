@@ -1,19 +1,13 @@
 import { createContext } from 'react'
-import type { Session } from '@supabase/supabase-js'
-import type { Profile, UserRole } from '@/types/auth'
+import type { Profile } from '@/types/auth'
 
 export interface AuthContextValue {
-  session: Session | null
+  authenticated: boolean
   profile: Profile | null
   loading: boolean
   authError: string | null
-  signIn: (email: string, password: string) => Promise<void>
-  signUp: (
-    fullName: string,
-    email: string,
-    password: string,
-    role: UserRole,
-  ) => Promise<boolean>
+  signIn: () => Promise<void>
+  signUp: () => Promise<void>
   signOut: () => Promise<void>
 }
 

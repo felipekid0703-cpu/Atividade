@@ -1,21 +1,25 @@
-export type UserRole = 'student' | 'parent'
+export type UserRole = 'student' | 'parent' | 'tutor'
 export type ParentStudentLinkStatus = 'pending' | 'active' | 'revoked'
+
+export interface ProfileRow {
+  id: string
+  username: string | null
+  role: UserRole
+  full_name: string | null
+  email: string | null
+  avatar_url: string | null
+  created_at: string
+}
 
 export interface Database {
   public: {
     Tables: {
       profiles: {
-        Row: {
-          id: string
-          role: UserRole
-          full_name: string | null
-          email: string | null
-          avatar_url: string | null
-          created_at: string
-        }
+        Row: ProfileRow
         Insert: {
           id: string
           role: UserRole
+          username?: string | null
           full_name?: string | null
           email?: string | null
           avatar_url?: string | null
@@ -49,7 +53,12 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      ensure_keycloak_profile: {
+        Args: Record<string, never>
+        Returns: ProfileRow
+      }
+    }
     Enums: {
       app_role: UserRole
       parent_student_link_status: ParentStudentLinkStatus

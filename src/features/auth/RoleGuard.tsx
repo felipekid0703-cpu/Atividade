@@ -10,7 +10,7 @@ interface RoleGuardProps {
 }
 
 export function RoleGuard({ allowed, children }: RoleGuardProps) {
-  const { session, profile, loading, authError, signOut } = useAuth()
+  const { authenticated, profile, loading, authError, signOut } = useAuth()
   const [signOutError, setSignOutError] = useState<string | null>(null)
 
   if (loading) {
@@ -21,7 +21,7 @@ export function RoleGuard({ allowed, children }: RoleGuardProps) {
     )
   }
 
-  if (!session) return <Navigate to="/login" replace />
+  if (!authenticated) return <Navigate to="/login" replace />
 
   if (authError || !profile) {
     return (
